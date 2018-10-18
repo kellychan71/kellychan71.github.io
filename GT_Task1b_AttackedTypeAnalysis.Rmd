@@ -1,0 +1,166 @@
+---
+title: "GTVA_Task1b - Attack Type Analysis"
+Date: 23.09.2018
+output:
+  html_document: default
+  pdf_document: default
+Author: Kelly Choo
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(gridExtra)
+library(readr)
+library(ggmap)
+library(rworldmap)
+
+```
+
+## Import data
+Import 1st cleaned Global Terrorist Data Set aggred by the group from C:\Users\kelly chan\UniOfSyd\S2_2018\Visual Analytics\Assignment 2\Global Terrorism
+
+```{r}
+
+df <- read.csv('/Users/kelly chan/UniOfSyd/S2_2018/Visual Analytics/Assignment 2/Global Terrorism/terrorism_cleaned_KC.csv')
+```
+
+## Generate decades to group the years period
+
+```{r}
+df1 <- df %>%
+  select(counter, iyear, country_txt, city, latitude,longitude,attacktype1_txt, targtype1_txt)
+df1 <- df1 %>%
+  mutate(decade = 
+           ifelse(iyear < 1980, "1970s",
+                   ifelse(iyear < 1990, "1980s",
+                          ifelse(iyear < 2000, "1990s",
+                                 ifelse(iyear <2010, "2000s", "2010s")))))
+
+```
+## Plot the Attack Type and Target counts over 5 decades period
+
+The data shows that "Bombing/Explosion" is the highest method terrorist used to carry attack since last 48 years. "Private Citizens & Property" was hit the most during the terrorist attack incidents.
+
+```{r}
+
+ggplot(data=df1, aes(x = df1$attacktype1_txt, stat = 'count', fill = df1$attacktype1_txt)) +
+  geom_bar() +
+  stat_count(aes(label = ..count..), geom = "text", size = 3) +
+  scale_fill_hue(name="Attack Type")  +
+  theme_bw() +
+  theme(legend.position="none") +
+  theme(axis.text.x = element_text(angle=45, hjust = 1)) +
+  labs(title="Terrorism Attack Type Counts", x="Attack Type",y="Count")
+
+ggplot(data=df1, aes(x = df1$targtype1_txt, stat = 'count',fill = df1$targtype1_txt)) +
+  geom_bar() +
+  stat_count(aes(label = ..count..), geom = "text", size = 3) +
+  scale_fill_hue(name="Target Type")  +
+  theme_bw() +
+  theme(legend.position="none") +
+  theme(axis.text.x = element_text(angle=25, hjust = 1)) +
+  labs(title="Terrorism Target Type Counts", x="Target Type",y="Count")
+
+```
+
+## Plot bar chart for Attack type distributions over 5 decades periods
+
+The global terrorism is trending up with both attatck type and target type data show 2010s has highest terrorist incident compare to past 4 decades. 
+
+```{r}
+# bar chart
+ggplot(data=df1, aes(x = df1$attacktype1_txt, stat = 'count', group = df1$decade, colours = df1$decade, fill = df1$decade)) +
+  geom_bar() +
+  #geom_text(aes(label = ..count.., stat = 'count')) +
+  geom_text(aes(label = ifelse(..count.. > 20000 , ..count.., "")), stat="count", vjust=3) +
+  scale_fill_hue(name="Period")  +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle=45, hjust = 1)) +
+  labs(title="Terrorism Attack Type Counts Over 5 Decades", x="Attack Type",y="Count")
+
+ggplot(data=df1, aes(x = df1$targtype1_txt, stat = 'count', group = df1$decade, colours = df1$decade, fill = df1$decade)) +
+  geom_bar() +
+  geom_text(aes(label = ifelse(..count.. > 15000 , ..count.., "")), stat="count", size = 2, vjust=3) +
+  scale_fill_hue(name="Period")  +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle=45, hjust = 1)) +
+  labs(title="Terrorism Target Type Counts Over 5 Decades", x="Attack Type",y="Count")
+
+#line chart
+ggplot(data=df1, aes(x = df1$attacktype1_txt, stat = 'count', group=df1$decade, colour = df1$decade)) +
+  geom_line(stat = 'count') +
+  geom_point(stat = 'count') +
+  scale_colour_hue(name="Period")  +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle=45, hjust = 1)) +
+  labs(title="Terrorism Attack Type Counts Over 5 Decades", x="Attack Type",y="Count")
+
+ggplot(data=df1, aes(x = df1$decade,group=df1$attacktype1_txt, colour = df1$attacktype1_txt)) +
+  geom_line(stat = 'count') +
+  geom_point(stat = 'count') +
+  scale_colour_hue(name="Attack Type")  +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle=45, hjust = 1)) +
+  labs(title="Terrorism Attack Type Counts Ordered By Decades", x="Attack Type",y="Count")
+
+  
+```
+```{r}
+ggplot(data=df1, aes(x = df1$attacktype1_txt, y = df1$decade, group=df1$attacktype1_txt, colour = df1$attacktype1_txt)) +
+  geom_line() +
+  geom_point() +
+  geom_count() + 
+  scale_size_area() +
+  scale_size(guide=FALSE) +
+  scale_colour_hue(name="Attack Type")  +
+  theme_bw() +
+  theme(legend.position="bottom") +
+  theme(axis.text.x = element_text(angle=45, hjust = 1)) +
+  labs(title="Visualise Terrorism Attack Type Significance Growth Over 5 Decades", x="Attack Type",y="Decades")
+
+ggplot(data=df1, aes(x = df1$targtype1_txt, y = df1$decade, group=df1$targtype1_txt, colour = df1$targtype1_txt)) +
+  geom_line() +
+  geom_point() +
+  geom_count() + 
+  scale_size_area() +
+  scale_size(guide=FALSE) +
+  scale_colour_hue(name="Target Type")  +
+  theme_bw() +
+  theme(legend.position="bottom") +
+  theme(axis.text.x = element_text(angle=30, hjust = 1)) +
+  labs(title="Visualise Terrorism Target Type Significance Growth Over 5 Decades", x="Target Type",y="Decades")
+
+
+```
+
+## Relation between Attack Type against Target Type
+
+```{r fig.width=8, fig.height=8}
+ggplot(data=df1, aes(x = df1$attacktype1_txt, stat = 'count', group = df1$targtype1_txt, colours = df1$targtype1_txt, fill = df1$targtype1_txt)) +
+  geom_bar() +
+  scale_fill_hue("Target Type")  +
+  theme_bw() +
+  theme(legend.position="bottom", legend.box = "horizontal") +
+  theme(legend.text = element_text(colour="black", size=8)) +
+  theme(axis.text.x = element_text(angle=45, hjust = 1 )) +
+  labs(title="Target Type Ordered By Attack Type", x="Attack Type",y="Count") 
+```
+
+## Visualise the relationship between attack type and target type
+
+The visualisation indicates the high tendency of target by the attack type. Armed assult is commonlt happened to military, police and provite citizens. Hijacking has high probably to be taken place at airport.
+
+```{r fig.width=10, fig.height=8}
+ByAtt <- df %>% group_by(attacktype1_txt,targtype1_txt) %>% summarise(nIncidents = n())
+ggplot(data=ByAtt) + 
+  scale_colour_hue("Target")  +
+  geom_area(mapping=aes(x=attacktype1_txt, y=nIncidents, group=targtype1_txt, fill=targtype1_txt), position='fill') +
+  theme(legend.position="bottom") +
+  theme(legend.text = element_text(colour="black", size=8)) +
+  theme(axis.text.x = element_text(angle=45, hjust = 1)) +
+  labs(x='Attack Type', y='Occurances', fill='Target Type', title="Relationship between attack type and target type
+")
+```
+
