@@ -64,13 +64,13 @@ tag.map.title <- tags$style(HTML("
   .leaflet-control.map-title { 
     transform: translate(-50%,20%);
     position: fixed !important;
-    left: 80%;
+    left: 70%;
     text-align: center;
-    padding-left: 10px; 
-    padding-right: 10px; 
+    padding-left: 20px; 
+    padding-right: 20px; 
     background: rgba(255,255,255,0.75);
     font-weight: bold;
-    font-size: 16px;
+    font-size: 20px;
   }
 "))
 
@@ -84,7 +84,7 @@ html_legend <- "<b>Attack Type</b></br> <img src= './arm.png' style='vertical-al
 
 ## Create Overview map
 
-```{r,fig.width=10, fig.height=6}
+```{r,fig.width=10, fig.height=8}
 # Set map title in HTML Widget
 title <- tags$div(
   tag.map.title, HTML("Global Terrorism Worldmap (1970-2017)")
@@ -97,11 +97,11 @@ Ter_map_o <- df1 %>%
   addTiles() %>%
   setView(lng = -10, lat =20, zoom = 2) %>%
   addMarkers(~longitude, ~latitude, options = markerOptions(interactive = FALSE, clickable = NULL), clusterOptions = markerClusterOptions(freezeAtZoom = FALSE,showCoverageOnHover = FALSE, zoomToBoundsOnClick = FALSE, spiderfyOnMaxZoom = FALSE)) %>%
-  addCircles(-95, 10, weight = 1, radius = 7500000, color="green" ,popup = "<a href='file:///C:/Users/kelly chan/UniOfSyd/S2_2018/Visual Analytics/Assignment 2/GTA/GTM_AMR.html'>Greater America Region</a>")%>%
-  addCircles(110, 22, weight = 1, radius = 3900000, color="navy" ,popup = "<a href='file:///C:/Users/kelly chan/UniOfSyd/S2_2018/Visual Analytics/Assignment 2/GTA/GTM_ASIA.html'>Greater Asia Region</a>")%>%
-  addCircles(60, 70, weight = 1, radius = 3400000, color="orange" ,popup = "<a href='file:///C:/Users/kelly chan/UniOfSyd/S2_2018/Visual Analytics/Assignment 2/GTA/GTM_EU.html'>Greater Europe Region</a>")%>%
-  addCircles(20, 0, weight = 1, radius = 4800000, color="purple" ,popup = "<a href='file:///C:/Users/kelly chan/UniOfSyd/S2_2018/Visual Analytics/Assignment 2/GTA/GTM_ARF.html'>Africa & Middle East Region</a>")%>%
-  addCircles(140, -31, weight = 1, radius = 3100000,  color="yellow" ,popup = "<a href='file:///C:/Users/kelly chan/UniOfSyd/S2_2018/Visual Analytics/Assignment 2/GTA/GTM_AOC.html'>Australasia & Oceania Region", labelOptions(noHide=TRUE))%>%
+  addCircles(-95, 10, weight = 1, radius = 7500000, color="green" ,popup = "<a href='https://kellychan71.github.io/GTM_AMR.html'>Greater America Region</a>")%>%
+  addCircles(110, 22, weight = 1, radius = 3900000, color="navy" ,popup = "<a href='kellychan71.github.io/GTM_ASIA.html'>Greater Asia Region</a>")%>%
+  addCircles(60, 70, weight = 1, radius = 3400000, color="orange" ,popup = "<a href='https://kellychan71.github.io/GTM_EU.html'>Greater Europe Region</a>")%>%
+  addCircles(20, 0, weight = 1, radius = 4800000, color="purple" ,popup = "<a href='https://kellychan71.github.io/GTM_AFR.html'>Africa & Middle East Region</a>")%>%
+  addCircles(140, -31, weight = 1, radius = 3100000,  color="yellow" ,popup = "<a href='https://kellychan71.github.io/GTM_AOC.html'>Australasia & Oceania Region</a>", labelOptions(noHide=TRUE))%>%
   addLegend("bottomleft", colors = Leg$colour, labels = Leg$region , title="Region Groups") %>%
   setMaxBounds(-155, 64, 150, -45) %>%
   addControl(title, position = "topleft", className="map-title") 
